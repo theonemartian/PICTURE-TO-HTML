@@ -1,0 +1,37 @@
+import webbrowser
+f=open("demo.html","w")
+buttonx=0
+labely=0
+buttonx=buttonx+1
+j=int(input("How many objects u want to add"))
+print("What do you want to include in your code :*Must remain in  sequence ")
+print("1.Label 2.Button ")
+
+buttoncode=""
+labelcode=""
+
+
+
+for i in range(j):
+    include=int(input("enter the index of the Object:"))
+    
+    
+    if(include==2):
+        x=input("text on button")
+        buttoncode="<button >{}</button>".format(x)
+        
+       
+        
+    elif(include==1):
+        x=input("enter label text")
+        labelcode="<p>{}</p>".format(x)
+        
+        
+        
+        
+message="<!DOCTYPE html><html><head></head><body>{}<h2></h2>{}</body></html> ".format(labelcode,buttoncode)
+        
+        
+f.write(message)
+f.close()
+webbrowser.open_new_tab("demo.html")
