@@ -1,37 +1,119 @@
 import webbrowser
-f=open("demo.html","w")
-buttonx=0
-labely=0
-buttonx=buttonx+1
-j=int(input("How many objects u want to add"))
-print("What do you want to include in your code :*Must remain in  sequence ")
-print("1.Label 2.Button ")
+import tkinter as tk
+import cv2
+import numpy as np
+    
 
-buttoncode=""
-labelcode=""
+root = tk.Tk()
+root.geometry("350x100") 
+root.title("IMAGE TO HTML")
+v1=tk.StringVar()
+label1=tk.Label(root,text="enter the path to image")
+label1.grid(column=1,row=1)
+entryname1 = tk.Entry(root, width=20, textvariable=v1)
+entryname1.grid(column=3,row=1)
 
-
-
-for i in range(j):
-    include=int(input("enter the index of the Object:"))
     
     
-    if(include==2):
-        x=input("text on button")
-        buttoncode="<button >{}</button>".format(x)
+def create():
+    bt=0
+    et=0
+    lb=0
+    v=v1.get()
+    
+   
         
+    font = cv2.FONT_HERSHEY_COMPLEX
+    img = cv2.imread(v, cv2.IMREAD_GRAYSCALE)
+    
+    _, threshold   = cv2.threshold(img, 240, 300, cv2.THRESH_BINARY)
+
+    contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
+        cv2.drawContours(img, [approx], 0, (0), 5)
+        x = approx.ravel()[0]
+        y = approx.ravel()[1] - 1
+        if len(approx) == 4:
+            bt=bt+1
+            cv2.putText(img, "button", (x, y), font, 1, (0))
+        elif len(approx>4) and len(approx) == 8:
+            et=et+1
+
+            cv2.putText(img, "textarea", (x, y), font, 1, (0))
+        else:
+            et=et+1
+            cv2.putText(img, "entrybox", (x, y), font, 1, (0))
+
+            cv2.imshow("shapes", img)
+    cv2.imshow("Threshold", threshold)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+    if bt>1 and et>0 :
+        btext=input("enter TExt on button: ")
+        ltext=input("enter label text: ")
+        entrycode='<input class="un " type="text" align="center" placeholder="ENter Here">'
+        buttoncode="<button >{}</button>".format(btext)
+        labelcode="<p>{}</p>".format(ltext)
+        message1="<!DOCTYPE html><html><head>IMAGE TO HTML BY YUVRAJ, ASHUTOSH, RISHABH</head><body>{}<h2></h2>{}{}</body></html> ".format(labelcode,entrycode,buttoncode)
+        message2="<!DOCTYPE html><html><head>IMAGE TO HTML BY YUVRAJ, ASHUTOSH, RISHABH</head><body>{}<h2></h2></body></html> ".format(buttoncode)
+
+        f.write(message1)
+
+    elif bt>1 and lb==0:
+        btext=input("enter label name on button: ")
+        buttoncode="<button >{}</button>".format(btext)
+        
+        message2='''<!DOCTYPE html><html>
+        <head>IMAGE TO HTML BY YUVRAJ, ASHUTOSH, RISHABH  </head>
        
-        
-    elif(include==1):
-        x=input("enter label text")
-        labelcode="<p>{}</p>".format(x)
+        <body>{}<h2></h2></body></html>'''.format(buttoncode)
         
         
+        f.write(message2)
+
+    elif et>0:
+
+        entrycode=''' <form class="form1">
+          <input class="un " type="text" align="center" placeholder="ENter Here">
+          '''
+
+        message3="<!DOCTYPE html><html><head>IMAGE TO HTML BY YUVRAJ, ASHUTOSH, RISHABH</head><body>{}<h2></h2></body></html> ".format(entrycode)
+        f.write(message3)
+    else:
+        print("IMAGE IS NOT RECOGNIZEBALE")
         
-        
-message="<!DOCTYPE html><html><head></head><body>{}<h2></h2>{}</body></html> ".format(labelcode,buttoncode)
-        
-        
-f.write(message)
-f.close()
-webbrowser.open_new_tab("demo.html")
+
+
+
+
+
+
+
+
+
+
+
+
+    f.close()
+    webbrowser.open_new_tab("demo.html")   
+
+
+
+
+    
+
+button1=tk.Button(root,bg='red',text="CREATE",command=create)
+button1.grid(column=2,row=2)
+
+
+
+
+
+
+f=open("demo.html","w")    
+
+root.mainloop()
+
